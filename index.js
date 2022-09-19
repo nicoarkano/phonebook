@@ -1,8 +1,12 @@
 const express = require("express")
 
 const app = express()
+const bp = require('body-parser')
 
-const persons = [
+app.use(bp.json())
+app.use(bp.urlencoded({extendend: true}))
+
+var persons = [
 
    {
 	   id:1,
@@ -27,13 +31,47 @@ const persons = [
 ]
 
 app.get('/', (request, response) => {
-   response.send('<h1>Hello World</h1>')
-
-})
-
+   response.send('<h1>Hello World</h1>') })
 app.get('/api/persons', (request,response) => {
     response.json(persons)
 
+})
+
+app.get('/api/persons/:id', (request , response) =>
+	{
+	    const id= Number(request.params.id)
+	    const person = persons.find(person => person.id === id)
+		response.json(person)
+
+	}
+)
+
+app.get('/info', (request, response) => { 
+	const date = new Date()
+	 response.send(`<p>Phonebook has info as ${persons.length} persons <br/> ${date}</p>`)}
+
+)
+app.delete('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  persons = persons.filter(person => person.id !== id)
+
+  response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const personBody = request.body
+
+ if (!personBody.name || !personBody.number) 
+{return response.status(400).json({error: 'please complet all the data'})}
+else if (persons.find(({name}) => name == personBody.name)){
+ console.log("error")
+ return response.status(400).json({error: 'name be unique'})}
+  
+
+const id = Math.random(0, 999999999)  
+  personBody.id = id
+  persons= persons.concat(personBody)
+  response.json(persons)
 })
 
 const PORT = 3001

@@ -2,9 +2,17 @@ const express = require("express")
 
 const app = express()
 const bp = require('body-parser')
+const morgan =require('morgan')
 
 app.use(bp.json())
 app.use(bp.urlencoded({extendend: true}))
+
+morgan.token('person', function (req, res) {
+	return JSON.stringify(req.body)
+
+})
+
+app.use(morgan(':method :url :status :person :response-time ms'))
 
 var persons = [
 

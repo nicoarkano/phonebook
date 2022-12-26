@@ -1,6 +1,10 @@
 const express = require("express")
 
+
 const app = express()
+//cross content 
+const cors = require("cors")
+app.use(cors())
 const bp = require('body-parser')
 const morgan =require('morgan')
 
@@ -45,7 +49,7 @@ app.get('/api/persons', (request,response) => {
 
 })
 
-app.get('/api/persons/:id', (request , response) =>
+app.get('/api/persons?:id', (request , response) =>
 	{
 	    const id= Number(request.params.id)
 	    const person = persons.find(person => person.id === id)
